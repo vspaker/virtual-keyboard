@@ -3,6 +3,8 @@
   margin: 0;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 .wrapper {
   width: 900px;
   margin: 0 auto;
@@ -21,10 +23,19 @@ textarea {
 p {
   margin: 0;
   margin-top: 8px;
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 14px;
 }
 
 h1 {
   margin: 10px;
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 22px;
+  color: crimson;
 }
 
 .keyboard {
@@ -51,6 +62,13 @@ h1 {
     background: #444;
     border-radius: 3px;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.4s all;
+    &:hover {
+      background: crimson;
+    }
     &_backspace {
       width: 104px;
     }
@@ -69,5 +87,24 @@ h1 {
     &_space {
       width: 400px;
     }
+    &_backspace,
+    &_enter,
+    &_tab,
+    &_caps-lock,
+    &_shift,
+    &_win,
+    &_ctrl,
+    &_alt,
+    &_del,
+    &_controls {
+      background: #222;
+    }
   }
+}
+
+span {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px;
 }
