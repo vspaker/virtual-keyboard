@@ -59,9 +59,23 @@ const toggleLanguage = () => {
 };
 
 const insertSymbol = (textarea, cursorCoords, sym) => {
+  let symbol = '';
+  if (sym === 'ArrowUp') {
+    symbol = '▲';
+  } else if (sym === 'ArrowDown') {
+    symbol = '▼';
+  } else if (sym === 'ArrowDown') {
+    symbol = '▼';
+  } else if (sym === 'ArrowLeft') {
+    symbol = '◄';
+  } else if (sym === 'ArrowRight') {
+    symbol = '►';
+  } else {
+    symbol = sym;
+  }
   const firstPart = textarea.value.slice(0, textarea.selectionStart);
   const lastPart = textarea.value.slice(textarea.selectionStart);
-  const inputPart = '' + sym;
+  const inputPart = '' + symbol;
   textarea.value = `${firstPart + inputPart + lastPart}`;
   cursorCoords.start++;
   cursorCoords.end++;

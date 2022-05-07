@@ -122,7 +122,18 @@ const Keyboard = () => {
       insertSymbol(textarea, cursorCoords, '\t');
     } else if (evt.target.closest('.keyboard__button_del')) {
       deleteSymbol(textarea, cursorCoords);
+    } else if (evt.target.closest('.keyboard__button_space')) {
+      insertSymbol(textarea, cursorCoords, ' ');
     } else if (evt.target.closest('.keyboard__button')) {
+      if (
+        evt.target.textContent === 'Caps Lock' ||
+        evt.target.textContent === 'Shift' ||
+        evt.target.textContent === 'Ctrl' ||
+        evt.target.textContent === 'Alt' ||
+        evt.target.textContent === 'Win'
+      ) {
+        return;
+      }
       insertSymbol(textarea, cursorCoords, evt.target.textContent);
     } else {
       return;
@@ -185,6 +196,15 @@ const Keyboard = () => {
     } else if (evt.key === 'Tab') {
       insertSymbol(textarea, cursorCoords, '\t');
     } else {
+      if (
+        evt.key === 'CapsLock' ||
+        evt.key === 'Shift' ||
+        evt.key === 'Control' ||
+        evt.key === 'Alt' ||
+        evt.key === 'Meta'
+      ) {
+        return;
+      }
       insertSymbol(textarea, cursorCoords, evt.key);
     }
 
