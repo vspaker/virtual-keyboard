@@ -58,4 +58,54 @@ const toggleLanguage = () => {
   }
 };
 
-export { toggleCaps, toggleShift, toggleLanguage };
+const insertSymbol = (textarea, cursorCoords, sym) => {
+  const firstPart = textarea.value.slice(0, textarea.selectionStart);
+  const lastPart = textarea.value.slice(textarea.selectionStart);
+  const inputPart = '' + sym;
+  textarea.value = `${firstPart + inputPart + lastPart}`;
+  cursorCoords.start++;
+  cursorCoords.end++;
+  textarea.selectionStart = cursorCoords.start;
+  textarea.selectionEnd = cursorCoords.end;
+};
+
+const deleteSymbol = (textarea, cursorCoords) => {
+  if (textarea.selectionStart === textarea.selectionEnd) {
+    const firstPart = textarea.value.slice(0, textarea.selectionStart);
+    const secondPart = textarea.value.slice(textarea.selectionStart + 1);
+    textarea.value = `${firstPart + secondPart}`;
+    textarea.selectionStart = cursorCoords.start;
+    textarea.selectionEnd = cursorCoords.end;
+  } else {
+    return;
+  }
+};
+
+const backSpace = (textarea, cursorCoords) => {
+  let firstPart = '';
+  let secondPart = '';
+
+  if (textarea.selectionStart !== textarea.selectionEnd) {
+    const cursorReplacement = textarea.selectionEnd - textarea.selectionStart;
+    firstPart = textarea.value.slice(0, textarea.selectionStart);
+    secondPart = textarea.value.slice(textarea.selectionEnd);
+    cursorCoords.end = cursorCoords.end - cursorReplacement;
+  } else {
+    firstPart = textarea.value.slice(0, textarea.selectionStart - 1);
+    secondPart = textarea.value.slice(textarea.selectionStart);
+    cursorCoords.start = textarea.selectionStart - 1;
+    cursorCoords.end = textarea.selectionEnd - 1;
+  }
+  textarea.value = `${firstPart + secondPart}`;
+  textarea.selectionStart = cursorCoords.start;
+  textarea.selectionEnd = cursorCoords.end;
+};
+
+export {
+  toggleCaps,
+  toggleShift,
+  toggleLanguage,
+  insertSymbol,
+  deleteSymbol,
+  backSpace,
+};

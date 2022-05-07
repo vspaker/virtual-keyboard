@@ -1,5 +1,12 @@
 import './keyboard.scss';
-import { toggleCaps, toggleShift, toggleLanguage } from '../utils/utils';
+import {
+  toggleCaps,
+  toggleShift,
+  toggleLanguage,
+  insertSymbol,
+  deleteSymbol,
+  backSpace,
+} from '../utils/utils';
 import {
   RU_LOWERCASE,
   RU_UPPERCASE,
@@ -37,6 +44,8 @@ const Keyboard = () => {
   const pFirst = document.createElement('p');
   const pLast = document.createElement('p');
 
+  textarea.setAttribute('cols', 50);
+  textarea.setAttribute('rows', 5);
   h1.innerHTML = 'Виртуальная клавиатура';
   pFirst.innerHTML = 'Клавиатура создана в операционной системе Windows';
   pLast.innerHTML = 'Для переключения раскладки: левые Ctrl + Alt';
@@ -89,18 +98,43 @@ const Keyboard = () => {
 
   renderKeyboard();
 
+  let cursorCoords = {
+    start: 0,
+    end: 0,
+  };
+
   const clickHandler = (evt) => {
+    if (evt.target.closest('textarea')) {
+      cursorCoords.start = textarea.selectionStart;
+      cursorCoords.end = textarea.selectionEnd;
+    }
+
     if (evt.target.closest('.keyboard__button_caps-lock')) {
       toggleCaps();
       renderKeyboard();
     }
-    return;
+
+    if (evt.target.closest('.keyboard__button_enter')) {
+      insertSymbol(textarea, cursorCoords, '\n');
+    } else if (evt.target.closest('.keyboard__button_backspace')) {
+      backSpace(textarea, cursorCoords);
+    } else if (evt.target.closest('.keyboard__button_tab')) {
+      insertSymbol(textarea, cursorCoords, '\t');
+    } else if (evt.target.closest('.keyboard__button_del')) {
+      deleteSymbol(textarea, cursorCoords);
+    } else if (evt.target.closest('.keyboard__button')) {
+      insertSymbol(textarea, cursorCoords, evt.target.textContent);
+    } else {
+      return;
+    }
   };
 
   const mouseDownHandler = (evt) => {
     if (evt.target.closest('.keyboard__button_shift')) {
       toggleShift();
       renderKeyboard();
+    } else if (evt.target.closest('.keyboard__button')) {
+      evt.preventDefault();
     }
     return;
   };
@@ -118,6 +152,7 @@ const Keyboard = () => {
   const altLeft = 'AltLeft';
 
   const keyDownHandler = (evt) => {
+    evt.preventDefault();
     if (evt.code === 'ControlLeft' || evt.code === 'AltLeft') {
       pressedKeys.add(evt.code);
       const targetCodes = [ctrlLeft, altLeft];
@@ -141,6 +176,18 @@ const Keyboard = () => {
       renderKeyboard();
     }
 
+    if (evt.key === 'Enter') {
+      insertSymbol(textarea, cursorCoords, '\n');
+    } else if (evt.key === 'Backspace') {
+      backSpace(textarea, cursorCoords);
+    } else if (evt.key === 'Delete') {
+      deleteSymbol(textarea, cursorCoords);
+    } else if (evt.key === 'Tab') {
+      insertSymbol(textarea, cursorCoords, '\t');
+    } else {
+      insertSymbol(textarea, cursorCoords, evt.key);
+    }
+
     return;
   };
 
@@ -151,6 +198,13 @@ const Keyboard = () => {
       renderKeyboard();
     }
   };
+
+  const focusHandler = () => {
+    textarea.selectionStart = cursorCoords.start;
+    textarea.selectionEnd = cursorCoords.end;
+  };
+
+  textarea.addEventListener('focus', focusHandler);
 
   wrapper.addEventListener('click', clickHandler);
   wrapper.addEventListener('mousedown', mouseDownHandler);
