@@ -16,6 +16,7 @@ import {
   ENG_UPPERCASE,
   ENG_UPPERCASE_SHIFTED,
   ENG_LOWERCASE_SHIFTED,
+  BUTTON_IDS,
 } from '../data/letters';
 
 const DataStorage = {
@@ -51,7 +52,10 @@ const Keyboard = () => {
   pLast.innerHTML = 'Для переключения раскладки: левые Ctrl + Alt';
   keyboard.classList.add('keyboard');
 
-  const renderKeyboard = () => {
+  //localStorage.clear();
+
+  const renderKeyboard = (id) => {
+    let targetShift = id ? id : null;
     keyboard.innerHTML = '';
     let letters;
     if (!localStorage.getItem('code')) {
@@ -75,6 +79,18 @@ const Keyboard = () => {
       const row = keyboard.querySelectorAll('.keyboard__row');
       const button = document.createElement('div');
       button.classList.add('keyboard__button');
+      button.setAttribute('id', `${BUTTON_IDS[i]}`);
+
+      if (
+        letters == DataStorage[2] ||
+        letters == DataStorage[4] ||
+        letters == DataStorage[6] ||
+        letters == DataStorage[8]
+      ) {
+        if (button.getAttribute('id') === 'CapsLock')
+          button.classList.add('pressed');
+      }
+
       const textNode = document.createElement('span');
       button.append(textNode);
       const buttonText = `${letters[i]}` === 'Space' ? '' : `${letters[i]}`;
@@ -85,6 +101,7 @@ const Keyboard = () => {
           `keyboard__button_${letters[i].toLowerCase().replace(' ', '-')}`
         );
       }
+
       if (
         letters[i] === '▲' ||
         letters[i] === '◄' ||
@@ -93,6 +110,9 @@ const Keyboard = () => {
       ) {
         button.classList.add('keyboard__button_controls');
       }
+    }
+    if (targetShift) {
+      keyboard.querySelector(`#${targetShift}`).classList.add('pressed');
     }
   };
 
@@ -142,15 +162,23 @@ const Keyboard = () => {
 
   const mouseDownHandler = (evt) => {
     if (evt.target.closest('.keyboard__button_shift')) {
+      const id = evt.target
+        .closest('.keyboard__button_shift')
+        .getAttribute('id');
+
       toggleShift();
-      renderKeyboard();
+      renderKeyboard(id);
     } else if (evt.target.closest('.keyboard__button')) {
+      evt.target.closest('.keyboard__button').classList.add('pressed');
       evt.preventDefault();
     }
     return;
   };
 
   const mouseUpHandler = (evt) => {
+    if (evt.target.closest('.keyboard__button')) {
+      evt.target.closest('.keyboard__button').classList.remove('pressed');
+    }
     if (evt.target.closest('.keyboard__button_shift')) {
       toggleShift();
       renderKeyboard();
@@ -163,6 +191,8 @@ const Keyboard = () => {
   const altLeft = 'AltLeft';
 
   const keyDownHandler = (evt) => {
+    const node = keyboard.querySelector(`#${evt.code}`);
+    node.classList.add('pressed');
     evt.preventDefault();
     if (evt.code === 'ControlLeft' || evt.code === 'AltLeft') {
       pressedKeys.add(evt.code);
@@ -179,7 +209,7 @@ const Keyboard = () => {
 
     if (evt.key === 'Shift' && !evt.repeat) {
       toggleShift();
-      renderKeyboard();
+      renderKeyboard(evt.code);
     }
 
     if (evt.code === 'CapsLock' && !evt.repeat) {
@@ -205,13 +235,18 @@ const Keyboard = () => {
       ) {
         return;
       }
-      insertSymbol(textarea, cursorCoords, evt.key);
+      const nodeText = node.textContent;
+      insertSymbol(textarea, cursorCoords, nodeText);
     }
 
     return;
   };
 
   const keyUpHandler = (evt) => {
+    const node = keyboard.querySelector(`#${evt.code}`);
+    if (evt.code !== 'CapsLock') {
+      node.classList.remove('pressed');
+    }
     pressedKeys.delete(evt.code);
     if (evt.key === 'Shift') {
       toggleShift();

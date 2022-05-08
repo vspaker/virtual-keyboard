@@ -71,10 +71,10 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: 0.4s all;
+  transition: 0.2s all;
 }
 .keyboard__button:hover {
-  background: crimson;
+  background: blue;
 }
 .keyboard__button_backspace {
   width: 104px;
@@ -103,4 +103,9 @@ span {
   font-size: 16px;
   font-weight: 700;
   line-height: 16px;
+}
+
+.pressed {
+  background: blue;
+  border-radius: 50px;
 }
