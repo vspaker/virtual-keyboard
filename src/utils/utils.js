@@ -115,4 +115,11 @@ const backSpace = (textarea, cursorCoords) => {
   textarea.selectionEnd = cursorCoords.end;
 };
 
-export {toggleCaps, toggleShift, toggleLanguage, insertSymbol, deleteSymbol, backSpace};
+export {
+  toggleCaps,
+  toggleShift,
+  toggleLanguage,
+  insertSymbol,
+  deleteSymbol,
+  backSpace,
+};
