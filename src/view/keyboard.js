@@ -52,9 +52,7 @@ const Keyboard = () => {
   pLast.innerHTML = 'Для переключения раскладки: левые Ctrl + Alt';
   keyboard.classList.add('keyboard');
 
-  //localStorage.clear();
-
-  const renderKeyboard = (id) => {
+  const renderKeyboard = id => {
     let targetShift = id ? id : null;
     keyboard.innerHTML = '';
     let letters;
@@ -87,8 +85,7 @@ const Keyboard = () => {
         letters == DataStorage[6] ||
         letters == DataStorage[8]
       ) {
-        if (button.getAttribute('id') === 'CapsLock')
-          button.classList.add('pressed');
+        if (button.getAttribute('id') === 'CapsLock') button.classList.add('pressed');
       }
 
       const textNode = document.createElement('span');
@@ -97,17 +94,10 @@ const Keyboard = () => {
       textNode.innerHTML = buttonText;
       row[row.length - 1].append(button);
       if (letters[i].length > 1) {
-        button.classList.add(
-          `keyboard__button_${letters[i].toLowerCase().replace(' ', '-')}`
-        );
+        button.classList.add(`keyboard__button_${letters[i].toLowerCase().replace(' ', '-')}`);
       }
 
-      if (
-        letters[i] === '▲' ||
-        letters[i] === '◄' ||
-        letters[i] === '▼' ||
-        letters[i] === '►'
-      ) {
+      if (letters[i] === '▲' || letters[i] === '◄' || letters[i] === '▼' || letters[i] === '►') {
         button.classList.add('keyboard__button_controls');
       }
     }
@@ -123,7 +113,7 @@ const Keyboard = () => {
     end: 0,
   };
 
-  const clickHandler = (evt) => {
+  const clickHandler = evt => {
     if (evt.target.closest('textarea')) {
       cursorCoords.start = textarea.selectionStart;
       cursorCoords.end = textarea.selectionEnd;
@@ -160,11 +150,9 @@ const Keyboard = () => {
     }
   };
 
-  const mouseDownHandler = (evt) => {
+  const mouseDownHandler = evt => {
     if (evt.target.closest('.keyboard__button_shift')) {
-      const id = evt.target
-        .closest('.keyboard__button_shift')
-        .getAttribute('id');
+      const id = evt.target.closest('.keyboard__button_shift').getAttribute('id');
 
       toggleShift();
       renderKeyboard(id);
@@ -175,7 +163,7 @@ const Keyboard = () => {
     return;
   };
 
-  const mouseUpHandler = (evt) => {
+  const mouseUpHandler = evt => {
     if (evt.target.closest('.keyboard__button')) {
       evt.target.closest('.keyboard__button').classList.remove('pressed');
     }
@@ -190,9 +178,11 @@ const Keyboard = () => {
   const ctrlLeft = 'ControlLeft';
   const altLeft = 'AltLeft';
 
-  const keyDownHandler = (evt) => {
+  const keyDownHandler = evt => {
     const node = keyboard.querySelector(`#${evt.code}`);
-    node.classList.add('pressed');
+    if (node) {
+      node.classList.add('pressed');
+    }
     evt.preventDefault();
     if (evt.code === 'ControlLeft' || evt.code === 'AltLeft') {
       pressedKeys.add(evt.code);
@@ -225,27 +215,35 @@ const Keyboard = () => {
       deleteSymbol(textarea, cursorCoords);
     } else if (evt.key === 'Tab') {
       insertSymbol(textarea, cursorCoords, '\t');
+    } else if (evt.code === 'Space') {
+      insertSymbol(textarea, cursorCoords, ' ');
+    } else if (evt.key === 'Meta') {
+      console.log(evt.key);
+      setTimeout(() => {
+        node.classList.remove('pressed');
+      }, 500);
     } else {
       if (
         evt.key === 'CapsLock' ||
         evt.key === 'Shift' ||
         evt.key === 'Control' ||
-        evt.key === 'Alt' ||
-        evt.key === 'Meta'
+        evt.key === 'Alt'
       ) {
         return;
       }
-      const nodeText = node.textContent;
+      const nodeText = node ? node.textContent : '';
       insertSymbol(textarea, cursorCoords, nodeText);
     }
 
     return;
   };
 
-  const keyUpHandler = (evt) => {
+  const keyUpHandler = evt => {
     const node = keyboard.querySelector(`#${evt.code}`);
     if (evt.code !== 'CapsLock') {
-      node.classList.remove('pressed');
+      if (node) {
+        node.classList.remove('pressed');
+      }
     }
     pressedKeys.delete(evt.code);
     if (evt.key === 'Shift') {
@@ -278,4 +276,4 @@ const Keyboard = () => {
   return wrapper;
 };
 
-export { Keyboard };
+export {Keyboard};
